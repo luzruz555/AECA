@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>이상개체관리국 — 세계관 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050505;
+  --ink: #e8e4d8;
+  --muted: #6a6558;
+  --line: #2a2824;
+  --accent: #c83c3c;
+  --omega: #d4a056;
+  --psi: #5a8cd4;
+  --ok: #4a9a4a;
+  --panel: #0d0c0c;
+  --serif: 'Noto Serif KR', serif;
+  --mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { background: var(--bg); color: var(--ink); font-family: var(--serif); overflow-x: hidden; }
+body { min-height: 100vh; }
+
+/* ============ 슬라이드 ============ */
+.slides-container {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--bg);
+  display: flex; justify-content: center; align-items: center;
+  cursor: pointer;
+  transition: opacity 0.8s;
+}
+.slides-container.hidden { opacity: 0; pointer-events: none; }
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 3rem;
+  opacity: 0;
+  transition: opacity 0.8s;
+  text-align: center;
+}
+.slide.active { opacity: 1; }
+
+.slide-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.slide h1 {
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
+}
+
+.slide p {
+  font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+  line-height: 2;
+  max-width: 560px;
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+.slide .accent { color: var(--accent); }
+.slide .omega { color: var(--omega); }
+.slide .psi { color: var(--psi); }
+
+.slide-divider {
+  width: 60px; height: 2px;
+  background: var(--accent);
+  margin: 1.5rem 0;
+}
+
+/* 슬라이드 진행바 */
+.slide-progress {
+  position: fixed;
+  bottom: 2rem; left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  display: flex; gap: 0.6rem;
+  align-items: center;
+}
+.slide-progress.hidden { display: none; }
+.slide-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--line);
+  transition: all 0.3s;
+}
+.slide-dot.active {
+  background: var(--accent);
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* 스킵 버튼 */
+.skip-btn {
+  position: fixed;
+  top: 1.5rem; right: 1.5rem;
+  z-index: 1002;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 0.5rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.skip-btn:hover { border-color: var(--ink); color: var(--ink); }
+.skip-btn.hidden { display: none; }
+
+/* 클릭 힌트 */
+.click-hint {
+  position: fixed;
+  bottom: 4rem; left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.2em;
+  animation: hint-pulse 2s infinite;
+}
+.click-hint.hidden { display: none; }
+@keyframes hint-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* 슬라이드 애니메이션 */
+.slide-fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: slideFadeUp 0.8s forwards;
+}
+@keyframes slideFadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }
+.delay-4 { animation-delay: 0.8s; }
+
+/* 글리치 텍스트 */
+.glitch-text {
+  position: relative;
+  display: inline-block;
+}
+.glitch-text::before, .glitch-text::after {
+  content: attr(data-text);
+  position: absolute; left: 0; top: 0;
+  width: 100%; height: 100%;
+}
+.glitch-text::before {
+  color: var(--accent);
+  animation: glitch1 3s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+}
+.glitch-text::after {
+  color: var(--psi);
+  animation: glitch2 3s infinite;
+  clip-path: polygon(0 66%, 100% 66%, 100% 100%, 0 100%);
+}
+@keyframes glitch1 {
+  0%, 95% { transform: translate(0); }
+  96% { transform: translate(-3px, 1px); }
+  97% { transform: translate(2px, -1px); }
+  98% { transform: translate(-1px, 2px); }
+  100% { transform: translate(0); }
+}
+@keyframes glitch2 {
+  0%, 95% { transform: translate(0); }
+  96% { transform: translate(3px, -1px); }
+  97% { transform: translate(-2px, 1px); }
+  98% { transform: translate(1px, -2px); }
+  100% { transform: translate(0); }
+}
+
+/* ============ 메인 메뉴 ============ */
+.main-menu {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1.5rem;
+  opacity: 0;
+  transition: opacity 0.8s;
+}
+.main-menu.active { opacity: 1; }
+
+.menu-title {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.menu-subtitle {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.25em;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  max-width: 600px;
+  width: 100%;
+}
+
+.menu-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--ink);
+  display: block;
+}
+.menu-card:hover {
+  border-color: var(--accent);
+  background: rgba(200,60,60,0.04);
+  transform: translateY(-3px);
+}
+.menu-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+.menu-card:hover::before { transform: scaleX(1); }
+
+.menu-icon {
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+  display: block;
+}
+.menu-card-title {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.4rem;
+}
+.menu-card-desc {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* ============ 콘텐츠 패널 ============ */
+.content-panel {
+  display: none;
+  min-height: 100vh;
+  padding: 2rem 1.5rem 4rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.content-panel.active { display: block; }
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 0.5rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  transition: all 0.2s;
+}
+.back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+.content-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.5rem;
+}
+.content-sub {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  margin-bottom: 2rem;
+}
+.content-divider {
+  width: 100%; height: 1px;
+  background: var(--line);
+  margin: 2rem 0;
+}
+
+/* ============ 웹툰 ============ */
+.webtoon-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+.webtoon-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.webtoon-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.webtoon-thumb {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.webtoon-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.webtoon-thumb .placeholder {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.webtoon-info {
+  padding: 1rem;
+}
+.webtoon-name {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.3rem;
+}
+.webtoon-desc {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* 웹툰 뷰어 */
+.webtoon-viewer {
+  display: none;
+  margin-top: 1.5rem;
+}
+.webtoon-viewer.active { display: block; }
+.webtoon-viewer img {
+  width: 100%;
+  margin-bottom: 0;
+  display: block;
+}
+.webtoon-viewer .img-slot {
+  width: 100%;
+  min-height: 300px;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+}
+
+/* ============ 캐릭터 ============ */
+.char-section {
+  margin-bottom: 2rem;
+}
+.char-section-title {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  padding-bottom: 0.6rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.char-section-title.omega { color: var(--omega); }
+.char-section-title.psi { color: var(--psi); }
+
+.char-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.8rem;
+}
+.char-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 1rem;
+  transition: border-color 0.2s;
+}
+.char-card:hover { border-color: var(--muted); }
+.char-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+}
+.char-meta {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.char-faction {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--accent);
+  margin-top: 0.3rem;
+  letter-spacing: 0.08em;
+}
+
+/* ============ 이미지 설정 ============ */
+.img-setting-block {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 1.5rem;
+  margin-bottom: 1.2rem;
+}
+.img-setting-title {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+.img-code-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin-bottom: 1rem;
+}
+.img-code-table th {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-align: left;
+  padding: 0.5rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+.img-code-table td {
+  padding: 0.5rem 0.8rem;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+}
+.img-code-table code {
+  background: rgba(200,60,60,0.1);
+  color: var(--accent);
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  font-size: 0.75rem;
+}
+
+/* ============ 반응형 ============ */
+@media (max-width: 600px) {
+  .menu-grid { grid-template-columns: 1fr; }
+  .webtoon-grid { grid-template-columns: 1fr; }
+  .char-grid { grid-template-columns: 1fr; }
+  .slide { padding: 2rem 1.5rem; }
+  .slide p { font-size: 0.85rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 슬라이드 ============ -->
+<div class="slides-container" id="slidesContainer">
+
+  <!-- 슬라이드 0: 타이틀 -->
+  <div class="slide active" id="slide-0">
+    <div class="slide-label slide-fade-up">AECA · WORLD GUIDE</div>
+    <h1 class="slide-fade-up delay-1"><span class="glitch-text" data-text="이상개체관리국">이상개체관리국</span></h1>
+    <div class="slide-divider slide-fade-up delay-2"></div>
+    <p class="slide-fade-up delay-3">평행자아를 마주한 자들의 기록.</p>
+  </div>
+
+  <!-- 슬라이드 1: 합일 -->
+  <div class="slide" id="slide-1">
+    <div class="slide-label">合一 · UNION</div>
+    <h1>합일사건</h1>
+    <div class="slide-divider"></div>
+    <p>어느 날, 두 개의 지구가 하나의 공간에 포개어졌다.<br><br>
+    <span class="omega">Ω(오메가)</span>지구와 <span class="psi">Ψ(프사이)</span>지구.<br>
+    같은 이름, 같은 얼굴 — 그러나 다른 삶을 산 평행자아가<br>
+    하나의 공간에 존재하게 되었다.<br><br>
+    원인은 밝혀지지 않았다.</p>
+  </div>
+
+  <!-- 슬라이드 2: 재림 -->
+  <div class="slide" id="slide-2">
+    <div class="slide-label">再臨 · THE SECOND ADVENT</div>
+    <h1 class="accent">재림</h1>
+    <div class="slide-divider"></div>
+    <p>2026년 5월 5일.<br><br>
+    "평행자아 중 하나만 살아남는다."<br>
+    그 소문은 거짓이었다.<br><br>
+    그러나 소문을 믿은 사람들이 저지른 일은<br>
+    되돌릴 수 없었다.<br><br>
+    재림 이후 — 사람들이 <span class="accent">변하기</span> 시작했다.</p>
+  </div>
+
+  <!-- 슬라이드 3: 이상개체 -->
+  <div class="slide" id="slide-3">
+    <div class="slide-label">異常個體 · ANOMALOUS ENTITY</div>
+    <h1>이상개체</h1>
+    <div class="slide-divider"></div>
+    <p>내면의 모순이 임계점을 넘은 자.<br>
+    자기 자신을 마주한 자.<br>
+    그들은 — 인간이기를 멈추었다.<br><br>
+    외형이 변하고, 능력이 발현되며,<br>
+    자아가 서서히 사라진다.<br><br>
+    이것을 <span class="accent">이상개체화</span>라 부른다.</p>
+  </div>
+
+  <!-- 슬라이드 4: 관리국 -->
+  <div class="slide" id="slide-4">
+    <div class="slide-label">AECA · 이상개체화 관리국</div>
+    <h1>관리국</h1>
+    <div class="slide-divider"></div>
+    <p>이상개체를 위협으로 규정하고<br>
+    격리 · 통제하는 국가 기관.<br><br>
+    공동 국장 <span class="omega">백은아Ω</span>는 완벽한 통제를,<br>
+    <span class="psi">백은아Ψ</span>는 이해와 공존을 주장한다.<br><br>
+    같은 얼굴, 다른 방향.</p>
+  </div>
+
+  <!-- 슬라이드 5: 합일교 -->
+  <div class="slide" id="slide-5">
+    <div class="slide-label">合一敎 · THE UNION CHURCH</div>
+    <h1>합일교</h1>
+    <div class="slide-divider"></div>
+    <p>이상개체를 새로운 존재로 숭배하거나,<br>
+    이해하며 공존을 추구하는 종교 집단.<br><br>
+    교주 <span class="omega">신수현Ω</span>의 신앙이 진실인지<br>
+    다른 목적이 있는지는 — 아무도 모른다.</p>
+  </div>
+
+  <!-- 슬라이드 6: 생존자 -->
+  <div class="slide" id="slide-6">
+    <div class="slide-label">CIVILIANS</div>
+    <h1>생존자</h1>
+    <div class="slide-divider"></div>
+    <p>어디에도 속하지 않은 채<br>
+    이상개체를 피하거나, 맞서 싸우는 사람들.<br><br>
+    그들 사이에서 — 당신의 이야기가 시작된다.</p>
+  </div>
+
+  <!-- 슬라이드 7: 마지막 -->
+  <div class="slide" id="slide-7">
+    <div class="slide-label">BEGIN</div>
+    <h1><span class="glitch-text" data-text="당신의 선택은?">당신의 선택은?</span></h1>
+    <div class="slide-divider"></div>
+    <p style="opacity:0.5;">클릭하면 시작됩니다.</p>
+  </div>
+
+</div>
+
+<!-- 슬라이드 진행바 -->
+<div class="slide-progress" id="slideProgress">
+  <div class="slide-dot active" data-i="0"></div>
+  <div class="slide-dot" data-i="1"></div>
+  <div class="slide-dot" data-i="2"></div>
+  <div class="slide-dot" data-i="3"></div>
+  <div class="slide-dot" data-i="4"></div>
+  <div class="slide-dot" data-i="5"></div>
+  <div class="slide-dot" data-i="6"></div>
+  <div class="slide-dot" data-i="7"></div>
+</div>
+
+<!-- 클릭 힌트 -->
+<div class="click-hint" id="clickHint">CLICK TO CONTINUE</div>
+
+<!-- 스킵 버튼 -->
+<button class="skip-btn" id="skipBtn">SKIP ▷</button>
+
+<!-- ============ 메인 메뉴 ============ -->
+<div class="main-menu" id="mainMenu">
+  <h1 class="menu-title"><span class="glitch-text" data-text="이상개체관리국">이상개체관리국</span></h1>
+  <div class="menu-subtitle">AECA · 세계관 가이드</div>
+
+  <div class="menu-grid">
+    <div class="menu-card" onclick="showPanel('webtoon')">
+      <span class="menu-icon">📖</span>
+      <div class="menu-card-title">웹툰 보기</div>
+      <div class="menu-card-desc">프롤로그 · 관리국 · 합일교 · 한새벽</div>
+    </div>
+    <a class="menu-card" href="#" id="playLink" target="_blank">
+      <span class="menu-icon">▶</span>
+      <div class="menu-card-title">플레이하기</div>
+      <div class="menu-card-desc">캐릭터챗 바로가기</div>
+    </a>
+    <div class="menu-card" onclick="showPanel('characters')">
+      <span class="menu-icon">👤</span>
+      <div class="menu-card-title">캐릭터 설정</div>
+      <div class="menu-card-desc">등장인물 정보</div>
+    </div>
+    <div class="menu-card" onclick="showPanel('imgsettings')">
+      <span class="menu-icon">🖼</span>
+      <div class="menu-card-title">이미지 설정</div>
+      <div class="menu-card-desc">외부 이미지 출력 양식</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 웹툰 패널 ============ -->
+<div class="content-panel" id="panel-webtoon">
+  <button class="back-btn" onclick="backToMenu()">← 메뉴로</button>
+  <h2 class="content-title">웹툰 보기</h2>
+  <div class="content-sub">OVERLAP WEBTOON COLLECTION</div>
+
+  <div class="webtoon-grid" id="webtoonGrid">
+    <div class="webtoon-card" onclick="openWebtoon(0)">
+      <div class="webtoon-thumb"><span class="placeholder">THUMBNAIL</span></div>
+      <div class="webtoon-info">
+        <div class="webtoon-name">프롤로그</div>
+        <div class="webtoon-desc">PROLOGUE</div>
+      </div>
+    </div>
+    <div class="webtoon-card" onclick="openWebtoon(1)">
+      <div class="webtoon-thumb"><span class="placeholder">THUMBNAIL</span></div>
+      <div class="webtoon-info">
+        <div class="webtoon-name">이상개체관리국</div>
+        <div class="webtoon-desc">AECA STORY</div>
+      </div>
+    </div>
+    <div class="webtoon-card" onclick="openWebtoon(2)">
+      <div class="webtoon-thumb"><span class="placeholder">THUMBNAIL</span></div>
+      <div class="webtoon-info">
+        <div class="webtoon-name">합일교</div>
+        <div class="webtoon-desc">UNION CHURCH STORY</div>
+      </div>
+    </div>
+    <div class="webtoon-card" onclick="openWebtoon(3)">
+      <div class="webtoon-thumb"><span class="placeholder">THUMBNAIL</span></div>
+      <div class="webtoon-info">
+        <div class="webtoon-name">한새벽</div>
+        <div class="webtoon-desc">Ω ∩ Ψ STORY</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 웹툰 뷰어 -->
+  <div class="webtoon-viewer" id="webtoonViewer">
+    <button class="back-btn" onclick="closeWebtoon()">← 목록으로</button>
+    <h3 id="viewerTitle" style="margin-bottom:1rem;"></h3>
+    <div id="viewerImages"></div>
+  </div>
+</div>
+
+<!-- ============ 캐릭터 패널 ============ -->
+<div class="content-panel" id="panel-characters">
+  <button class="back-btn" onclick="backToMenu()">← 메뉴로</button>
+  <h2 class="content-title">캐릭터 설정</h2>
+  <div class="content-sub">CHARACTER PROFILES</div>
+
+  <div class="char-section">
+    <div class="char-section-title omega">Ω OMEGA</div>
+    <div class="char-grid">
+      <div class="char-card"><div class="char-name">민혜원</div><div class="char-meta">여 · 23세</div><div class="char-faction">이상개체관리국</div></div>
+      <div class="char-card"><div class="char-name">최예린</div><div class="char-meta">여 · 20세</div><div class="char-faction">이상개체관리국</div></div>
+      <div class="char-card"><div class="char-name">백성현</div><div class="char-meta">남 · 21세</div><div class="char-faction">합일교</div></div>
+      <div class="char-card"><div class="char-name">이슬</div><div class="char-meta">남 · 17세</div><div class="char-faction">합일교</div></div>
+      <div class="char-card"><div class="char-name">한새벽</div><div class="char-meta">여 · 19세</div><div class="char-faction">없음</div></div>
+      <div class="char-card"><div class="char-name">신수현</div><div class="char-meta">남 · 27세</div><div class="char-faction">합일교 교주</div></div>
+      <div class="char-card"><div class="char-name">백은아</div><div class="char-meta">여 · 24세</div><div class="char-faction">관리국 공동 국장</div></div>
+      <div class="char-card"><div class="char-name">최애령</div><div class="char-meta">여 · 22세</div><div class="char-faction">합일교</div></div>
+    </div>
+  </div>
+
+  <div class="char-section">
+    <div class="char-section-title psi">Ψ PSI</div>
+    <div class="char-grid">
+      <div class="char-card"><div class="char-name">민혜원</div><div class="char-meta">여 · 23세</div><div class="char-faction">이상개체관리국</div></div>
+      <div class="char-card"><div class="char-name">최예린</div><div class="char-meta">여 · 20세</div><div class="char-faction">이상개체관리국</div></div>
+      <div class="char-card"><div class="char-name">백성현</div><div class="char-meta">남 · 21세</div><div class="char-faction">합일교</div></div>
+      <div class="char-card"><div class="char-name">이슬</div><div class="char-meta">여 · 17세</div><div class="char-faction">이상개체관리국</div></div>
+      <div class="char-card"><div class="char-name">한새벽</div><div class="char-meta">여 · 19세</div><div class="char-faction">없음</div></div>
+      <div class="char-card"><div class="char-name">신수현</div><div class="char-meta">남 · 27세</div><div class="char-faction">합일교</div></div>
+      <div class="char-card"><div class="char-name">백은아</div><div class="char-meta">여 · 24세</div><div class="char-faction">관리국 공동 국장</div></div>
+      <div class="char-card"><div class="char-name">최애령</div><div class="char-meta">여 · 22세</div><div class="char-faction">합일교</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 이미지 설정 패널 ============ -->
+<div class="content-panel" id="panel-imgsettings">
+  <button class="back-btn" onclick="backToMenu()">← 메뉴로</button>
+  <h2 class="content-title">이미지 설정</h2>
+  <div class="content-sub">EXTERNAL IMAGE OUTPUT FORMAT</div>
+
+  <div class="img-setting-block">
+    <div class="img-setting-title">▶ 기본 출력 양식</div>
+    <p style="font-family:var(--mono); font-size:0.85rem; color:var(--ink); margin-bottom:1rem; word-break:break-all;">
+      <code>![](https://igx.kr/v/N1/{인물코드}/{상세코드})</code>
+    </p>
+    <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.5rem;">경로에서 인물코드와 상세코드만 변경하세요. 나머지는 고정입니다.</p>
+  </div>
+
+  <div class="img-setting-block">
+    <div class="img-setting-title">▶ 인물 코드표</div>
+    <table class="img-code-table">
+      <tr><th>코드</th><th>캐릭터</th><th>코드</th><th>캐릭터</th></tr>
+      <tr><td><code>O1</code></td><td>민혜원Ω</td><td><code>P1</code></td><td>민혜원Ψ</td></tr>
+      <tr><td><code>O2</code></td><td>최예린Ω</td><td><code>P2</code></td><td>최예린Ψ</td></tr>
+      <tr><td><code>O3</code></td><td>백성현Ω</td><td><code>P3</code></td><td>백성현Ψ</td></tr>
+      <tr><td><code>O4</code></td><td>이슬Ω</td><td><code>P4</code></td><td>이슬Ψ</td></tr>
+      <tr><td><code>O5</code></td><td>한새벽Ω</td><td><code>P5</code></td><td>한새벽Ψ</td></tr>
+      <tr><td><code>O6</code></td><td>신수현Ω</td><td><code>P6</code></td><td>신수현Ψ</td></tr>
+      <tr><td><code>O7</code></td><td>백은아Ω</td><td><code>P7</code></td><td>백은아Ψ</td></tr>
+      <tr><td colspan="2"><code>CR</code> — 이상개체</td><td colspan="2">상세코드에 1~28 사용</td></tr>
+    </table>
+  </div>
+
+  <div class="img-setting-block">
+    <div class="img-setting-title">▶ 상세 코드표</div>
+    <table class="img-code-table">
+      <tr><th>코드</th><th>설명</th></tr>
+      <tr><td><code>0</code></td><td>기본</td></tr>
+      <tr><td><code>1</code></td><td>기쁨</td></tr>
+      <tr><td><code>2</code></td><td>슬픔</td></tr>
+      <tr><td><code>3</code></td><td>분노</td></tr>
+      <tr><td><code>4</code></td><td>부끄러움</td></tr>
+      <tr><td><code>5</code></td><td>사망 or 부상</td></tr>
+    </table>
+    <p style="font-size:0.78rem; color:var(--muted); margin-top:0.5rem;">
+      이상개체의 경우 상세코드에 1~28 (개체 번호)을 입력합니다.<br>
+      예: <code>![](https://igx.kr/v/N1/CR/1)</code> → STORY01 이미지
+    </p>
+  </div>
+
+  </div>
+</div>
+
+<!-- BGM -->
+<audio id="bgm" loop preload="auto">
+  <source src="bgm.mp3" type="audio/mpeg">
+  <!-- bgm.mp3 파일을 같은 폴더에 넣으세요 -->
+</audio>
+<button class="skip-btn" id="bgmBtn" onclick="toggleBgm()" style="top:1.5rem; left:1.5rem; right:auto; z-index:1003;">♫ BGM OFF</button>
+
+<script>
+// ============================================================
+// 슬라이드 시스템
+// ============================================================
+
+let currentSlide = 0;
+const totalSlides = 8;
+const container = document.getElementById('slidesContainer');
+const progress = document.getElementById('slideProgress');
+const clickHint = document.getElementById('clickHint');
+const skipBtn = document.getElementById('skipBtn');
+
+function showSlide(index) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.slide-dot').forEach(d => d.classList.remove('active'));
+  
+  const slide = document.getElementById(`slide-${index}`);
+  if (slide) {
+    slide.classList.add('active');
+    // 애니메이션 재실행
+    const els = slide.querySelectorAll('.slide-fade-up');
+    els.forEach(el => {
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = '';
+    });
+  }
+  
+  const dot = document.querySelector(`.slide-dot[data-i="${index}"]`);
+  if (dot) dot.classList.add('active');
+}
+
+function nextSlide() {
+  if (currentSlide >= totalSlides - 1) {
+    endSlides();
+    return;
+  }
+  currentSlide++;
+  showSlide(currentSlide);
+}
+
+function endSlides() {
+  container.classList.add('hidden');
+  progress.classList.add('hidden');
+  clickHint.classList.add('hidden');
+  skipBtn.classList.add('hidden');
+  
+  setTimeout(() => {
+    container.style.display = 'none';
+    document.getElementById('mainMenu').classList.add('active');
+  }, 800);
+}
+
+container.addEventListener('click', nextSlide);
+skipBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  endSlides();
+});
+
+// ============================================================
+// 메뉴 / 패널
+// ============================================================
+
+function showPanel(name) {
+  document.getElementById('mainMenu').classList.remove('active');
+  document.getElementById('mainMenu').style.display = 'none';
+  document.getElementById(`panel-${name}`).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function backToMenu() {
+  document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('mainMenu').style.display = '';
+  document.getElementById('mainMenu').classList.add('active');
+  // 웹툰 뷰어 닫기
+  document.getElementById('webtoonViewer').classList.remove('active');
+  document.getElementById('webtoonGrid').style.display = '';
+  window.scrollTo(0, 0);
+}
+
+// ============================================================
+// 웹툰
+// ============================================================
+
+const webtoonData = [
+  {
+    title: '프롤로그 · PROLOGUE',
+    images: [
+      '', // 이미지 URL 넣을 자리 1
+      '', // 이미지 URL 넣을 자리 2
+      '', // 이미지 URL 넣을 자리 3
+    ]
+  },
+  {
+    title: '이상개체관리국 · AECA STORY',
+    images: ['', '', '']
+  },
+  {
+    title: '합일교 · UNION CHURCH STORY',
+    images: ['', '', '']
+  },
+  {
+    title: '한새벽 · Ω ∩ Ψ STORY',
+    images: ['', '', '']
+  }
+];
+
+function openWebtoon(index) {
+  const data = webtoonData[index];
+  document.getElementById('webtoonGrid').style.display = 'none';
+  document.getElementById('viewerTitle').textContent = data.title;
+  
+  const container = document.getElementById('viewerImages');
+  container.innerHTML = data.images.map((url, i) => {
+    if (url) {
+      return `<img src="${url}" alt="page ${i+1}" loading="lazy">`;
+    } else {
+      return `<div class="img-slot">이미지 ${i+1} — URL 미설정</div>`;
+    }
+  }).join('');
+  
+  document.getElementById('webtoonViewer').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function closeWebtoon() {
+  document.getElementById('webtoonViewer').classList.remove('active');
+  document.getElementById('webtoonGrid').style.display = '';
+  window.scrollTo(0, 0);
+}
+
+// ============================================================
+// BGM
+// ============================================================
+
+const bgm = document.getElementById('bgm');
+
+function toggleBgm() {
+  if (bgm.paused) {
+    bgm.play();
+    document.getElementById('bgmBtn').textContent = '♫ BGM ON';
+  } else {
+    bgm.pause();
+    document.getElementById('bgmBtn').textContent = '♫ BGM OFF';
+  }
+}
+
+</script>
+
+</body>
+</html>
