@@ -243,7 +243,7 @@ body::before {
 </div>
 
 <script>
-const bgm=document.getElementById('bgm');bgm.volume=0.05;
+const bgm=document.getElementById('bgm');bgm.volume=0.1;
 function toggleBgm(){if(bgm.paused){bgm.play();document.getElementById('bgmBtn').textContent='♫ BGM ON'}else{bgm.pause();document.getElementById('bgmBtn').textContent='♫ BGM OFF'}}
 let currentSlide=0;const totalSlides=8;const container=document.getElementById('slidesContainer');const progress=document.getElementById('slideProgress');const clickHint=document.getElementById('clickHint');const skipBtn=document.getElementById('skipBtn');
 function showSlide(i){document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.slide-dot').forEach(d=>d.classList.remove('active'));const s=document.getElementById(`slide-${i}`);if(s)s.classList.add('active');const d=document.querySelector(`.slide-dot[data-i="${i}"]`);if(d)d.classList.add('active')}
