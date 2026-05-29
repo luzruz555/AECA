@@ -198,7 +198,7 @@ body::before {
 <div class="char-card"><div class="char-card-img"><img src="/img/P3.png" alt="백성현Ψ"></div><div class="char-card-body"><div class="char-name">백성현</div><div class="char-meta">남 · 21세</div><div class="char-faction psi-f">합일교</div></div></div>
 <div class="char-card"><div class="char-card-img"><img src="/img/P4.png" alt="이슬Ψ"></div><div class="char-card-body"><div class="char-name">이슬</div><div class="char-meta">여 · 17세</div><div class="char-faction psi-f">이상개체관리국</div></div></div>
 <div class="char-card"><div class="char-card-img"><img src="/img/P5.png" alt="한새벽Ψ"></div><div class="char-card-body"><div class="char-name">한새벽</div><div class="char-meta">여 · 19세</div><div class="char-faction psi-f">없음</div></div></div>
-<div class="char-card"><div class="char-card-img"><img src="/img/P6.png" alt="신수현Ψ"></div><div class="char-card-body"><div class="char-name">신수현</div><div class="char-meta">남 · 27세</div><div class="char-faction psi-f">합일교</div></div></div>
+<div class="char-card"><div class="char-card-img"><img src="/img/P6.png" alt="신수현Ψ"></div><div class="char-card-body"><div class="char-name">신수현</div><div class="char-meta">여 · 25세</div><div class="char-faction psi-f">합일교</div></div></div>
 <div class="char-card"><div class="char-card-img"><img src="/img/P7.png" alt="백은아Ψ"></div><div class="char-card-body"><div class="char-name">백은아</div><div class="char-meta">여 · 24세</div><div class="char-faction psi-f">관리국 공동 국장</div></div></div>
 </div></div>
 
@@ -252,7 +252,7 @@ function endSlides(){container.classList.add('hidden');progress.classList.add('h
 container.addEventListener('click',nextSlide);skipBtn.addEventListener('click',e=>{e.stopPropagation();endSlides()});
 function showPanel(n){document.getElementById('mainMenu').classList.remove('active');document.getElementById('mainMenu').style.display='none';document.getElementById(`panel-${n}`).classList.add('active');window.scrollTo(0,0)}
 function backToMenu(){document.querySelectorAll('.content-panel').forEach(p=>p.classList.remove('active'));document.getElementById('mainMenu').style.display='';document.getElementById('mainMenu').classList.add('active');document.getElementById('webtoonViewer').classList.remove('active');document.getElementById('webtoonGrid').style.display='';window.scrollTo(0,0)}
-const webtoonData=[{title:'프롤로그 · PROLOGUE',images:['','','']},{title:'이상개체관리국 · AECA STORY',images:['','','']},{title:'합일교 · UNION CHURCH STORY',images:['','','']},{title:'한새벽 · Ω ∩ Ψ STORY',images:['/img/wt_3_1.png',/img/wt_3_2.png','/img/wt_3_3.png']}];
+const webtoonData=[{title:'프롤로그 · PROLOGUE',images:['','','']},{title:'이상개체관리국 · AECA STORY',images:['','','']},{title:'합일교 · UNION CHURCH STORY',images:['','','']},{title:'한새벽 · Ω ∩ Ψ STORY',images:['/img/wt_3_1.png','/img/wt_3_2.png','/img/wt_3_3.png']}];
 function openWebtoon(i){const d=webtoonData[i];document.getElementById('webtoonGrid').style.display='none';document.getElementById('viewerTitle').textContent=d.title;document.getElementById('viewerImages').innerHTML=d.images.map((u,j)=>u?`<img src="${u}" alt="page ${j+1}" loading="lazy">`:`<div class="img-slot">이미지 ${j+1} — URL 미설정</div>`).join('');document.getElementById('webtoonViewer').classList.add('active');window.scrollTo(0,0)}
 function closeWebtoon(){document.getElementById('webtoonViewer').classList.remove('active');document.getElementById('webtoonGrid').style.display='';window.scrollTo(0,0)}
 </script>
